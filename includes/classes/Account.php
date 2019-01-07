@@ -1,6 +1,7 @@
 <?php
 	class Account {
 
+		private $con;
 		private $errorArray;
 
 		public function __construct($con) {
@@ -17,12 +18,19 @@
 
 			if(empty($this->errorArray) == true) {
 				//Insert into db
-				return insertUserDetails($un, $fn, $ln, $em, $pw);
+				return $this->insertUserDetails($un, $fn, $ln, $em, $pw);
 			}
 			else {
 				return false;
 			}
 
+		}
+
+		public function getError($error) {
+			if(!in_array($error, $this->errorArray)) {
+				$error = "";
+			}
+			return "<span class='errorMessage'>$error</span>";
 		}
 
 		private function insertUserDetails($un, $fn, $ln, $em, $pw) {
@@ -32,13 +40,6 @@
 
 			$result = mysqli_query($this->con, "INSERT INTO users VALUES ('', '$un', '$fn', '$ln', '$em', '$encryptedPw', '$date', '$profilePic')");
 			return $result;
-		}
-
-		public function getError($error) {
-			if(!in_array($error, $this->errorArray)) {
-				$error = "";
-			}
-			return "<span class='errorMessage'>$error</span>";
 		}
 
 		private function validateUsername($un) {
